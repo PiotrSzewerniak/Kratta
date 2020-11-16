@@ -284,6 +284,8 @@ G4VPhysicalVolume* B4aDetectorConstruction::DefineVolumes()
   G4Material* gas_chamber = G4Material::GetMaterial("TetraFluoroMethane");
   G4Material* tarGra = G4Material::GetMaterial("Graphite");
   G4Material* plastic = G4Material::GetMaterial("G4_PLASTIC_SC_VINYLTOLUENE");
+  G4Material* vaccum = G4Material::GetMaterial("G4_Galactic");
+
 
   //if ( ! defaultMaterial || ! absorberMaterial || ! gapMaterial ) {
   //G4ExceptionDescription msg;
@@ -311,7 +313,7 @@ G4VPhysicalVolume* B4aDetectorConstruction::DefineVolumes()
 
   G4VSolid* worldS = new G4Box("World",fworldSizeXY, fworldSizeXY, fworldSizeZ); 
                     
-  G4LogicalVolume* worldLV = new G4LogicalVolume( worldS, defaultMaterial, "World");         
+  G4LogicalVolume* worldLV = new G4LogicalVolume( worldS, vaccum, "World");         
                                    
   G4VPhysicalVolume* worldPV
     = new G4PVPlacement(
@@ -351,6 +353,7 @@ G4VPhysicalVolume* B4aDetectorConstruction::DefineVolumes()
 
    G4VSolid* kr_obstacle = new G4Box("kr_obstacle",fKRwin_xy,fKRwin_xy,0.5*frameThick);
    G4VSolid* kr_coating = new G4Box("kr_coating",fKRwin_xy,fKRwin_xy,0.5*frameThickCoating);
+   G4VSolid* kr_pipe = new G4Tubs("kr_pipe",0.*mm,3.*mm,500.*mm,0.*deg,360.*deg);    
 
    G4LogicalVolume* kr_obstacleLV =                         
     new G4LogicalVolume(kr_obstacle,            //its solid
@@ -361,6 +364,14 @@ G4VPhysicalVolume* B4aDetectorConstruction::DefineVolumes()
     new G4LogicalVolume(kr_coating,            //its solid
                         csiwr_mat,             //its material
                         "kr_coating");         //its name
+
+    G4LogicalVolume* kr_pipeLV =                         
+    new G4LogicalVolume(kr_pipe,            //its solid
+                        csiwr_mat,             //its material
+                        "kr_pipe");         //its name
+
+    
+
 
 
 
@@ -394,7 +405,7 @@ G4VPhysicalVolume* B4aDetectorConstruction::DefineVolumes()
   //Left
   // G4VSolid* krMainLS = new G4Tubs("KrMainL",fKRRmin,fKRRmax,rep_h,pSPhi1,pDPhi1);      
   //G4LogicalVolume* krMainLLV = new G4LogicalVolume(krMainLS,defaultMaterial,"krMainLLV");
-  G4LogicalVolume* krMainLV = new G4LogicalVolume(krMainS,defaultMaterial,"krMainLV");
+  G4LogicalVolume* krMainLV = new G4LogicalVolume(krMainS,vaccum,"krMainLV");
 
   
   G4RotationMatrix *rm0 = new G4RotationMatrix();
@@ -470,7 +481,7 @@ G4VPhysicalVolume* B4aDetectorConstruction::DefineVolumes()
   for (int i=1;i<16;i++){
 
     G4ThreeVector mv1, mv2;
-    G4RotationMatrix rm1;
+    G4RotationMatrix rm1, rm2;
     G4Transform3D trv, trv2;
     
     G4double fx=dist*cos(phi[i])*sin(theta[i]);
@@ -478,16 +489,34 @@ G4VPhysicalVolume* B4aDetectorConstruction::DefineVolumes()
     G4double fz=dist*cos(theta[i]);
  
    auto dist2 = dist - 100*mm;
-      
+     //down
     if(i<8){
       rm1.rotateX(lat[i]+11.*deg);
       rm1.rotateY(lon[i]);
       rm1.rotateZ(0*deg);
-      fy=fy+10*mm;
+
+      rm2.rotateX(lat[i]+11.*deg);
+      rm2.rotateY(lon[i]);
+      rm2.rotateZ(0*deg);
+
+    mv2.setX(dist2*cos(phi[i])*sin(theta[i])-frameWidth+5.5*mm);
+    mv2.setY(dist2*sin(phi[i])*sin(theta[i])-frameWidth-4.*mm);
+    mv2.setZ(dist2*cos(theta[i]));
+     //up
     }else{
       rm1.rotateX(lat[i]+2.*deg);
-      rm1.rotateY(lon[i]);
+      rm1.rotateY(lon[i]+2.*deg);
       rm1.rotateZ(0*deg);
+
+      rm2.rotateX(lat[i]+2.*deg);
+      rm2.rotateY(lon[i]+2.*deg);
+      rm2.rotateZ(0*deg);
+
+      mv2.setX(dist2*cos(phi[i])*sin(theta[i])-frameWidth);
+    mv2.setY(dist2*sin(phi[i])*sin(theta[i])-frameWidth-1.*mm);
+    mv2.setZ(dist2*cos(theta[i]));
+
+
     }
 
     cout<<fx<<" "<<fy<<" "<<fz<<endl;
@@ -496,13 +525,12 @@ G4VPhysicalVolume* B4aDetectorConstruction::DefineVolumes()
     mv1.setZ(fz);
 
 
-    mv2.setX(dist2*cos(phi[i])*sin(theta[i]));
-    mv2.setY(dist2*sin(phi[i])*sin(theta[i]));
-    mv2.setZ(dist2*cos(theta[i]));
+
+
     
 
     trv=G4Transform3D(rm1,mv1);
-    trv2=G4Transform3D(rm1,mv2);
+    trv2=G4Transform3D(rm2,mv2);
     
   
     kr_housingPV =  new G4PVPlacement(
@@ -523,18 +551,29 @@ G4VPhysicalVolume* B4aDetectorConstruction::DefineVolumes()
                     krMainLV,              
                     false,                   
                     i,                       
-                    fCheckOverlaps);  
+                    fCheckOverlaps);  }
                             
 
-    new G4PVPlacement(
-                    trv2,         
-                    kr_coatingLV,               
-                    "kr_coatingPV",              
-                    krMainLV,              
-                    false,                   
-                    i,                       
-                    fCheckOverlaps);  
-                    }        
+    // new G4PVPlacement(
+    //                 trv2,         
+    //                 kr_coatingLV,               
+    //                 "kr_coatingPV",              
+    //                 krMainLV,              
+    //                 false,                   
+    //                 i,                       
+    //                 fCheckOverlaps); } 
+                            
+
+    /*new G4PVPlacement(
+    				trv,           
+					
+					kr_pipeLV,    
+					"kr_pipePV",  
+					//worldLV,
+					krMainLV,
+					false,         
+					i,             
+					fCheckOverlaps); */
 
   //box testowy
   /*new G4PVPlacement(0,                       //no rotation
@@ -1006,7 +1045,7 @@ G4LogicalVolume* kr_housingRLV = new G4LogicalVolume(ReflKrR,defaultMaterial,"kr
 						 fCheckOverlaps);*/
 
   //PRZEROBIĆ NA CYLINDER
-  G4VSolid* tarTi2S = new G4Box("Ti2S",fGra_xy,fGra_xy,0.5*tiThick);    
+  G4VSolid* tarTi2S = new G4Tubs("Ti2S",0.*mm,30.*mm,3.*mm,0.*deg,360.*deg);    
   G4LogicalVolume* tarTi2LV = new G4LogicalVolume(tarTi2S,target_mat,"tarTi2LV");
 
   G4PVPlacement *tarTi2PV = new G4PVPlacement(rm01,           
@@ -1130,9 +1169,10 @@ G4LogicalVolume* kr_housingRLV = new G4LogicalVolume(ReflKrR,defaultMaterial,"kr
 
  //magenta
   G4VisAttributes* krh= new G4VisAttributes(G4Colour(1.,0,1.));
-  krh->SetVisibility(true);
-  //krh->SetForceAuxEdgeVisible (true);
-  krh->SetForceSolid (true);
+  //krh->SetVisibility(true);
+  krh->SetForceAuxEdgeVisible (true);
+  //siatka
+  krh->SetForceSolid (true); 
   kr_housingLV->SetVisAttributes(krh);
   //csi_longLV->SetVisAttributes(cryst);
 
