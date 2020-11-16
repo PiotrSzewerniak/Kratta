@@ -166,7 +166,7 @@ G4ThreeVector dir = flatGen();
   //particleGun2->SetParticleMomentumDirection(G4ThreeVector(momentum[3],momentum[4],momentum[5]));
 
 
-    particleGun1->SetParticleEnergy(0.200*GeV);
+    particleGun1->SetParticleEnergy(bt*GeV);
     //particleGun2->SetParticleEnergy(bt2*GeV);
 
 //cout<<vertex[0]<<" "<<vertex[1]<<" "<<vertex[2]<<endl;
@@ -312,21 +312,25 @@ void B4aPrimaryGeneratorAction::RandomInit(G4int level )
 void B4aPrimaryGeneratorAction::Pos(void)
 {
   G4double bsgx,bsgy;
+  thigh = 1.5*mm;
 
   bsgx = bfwhmx/(2.*sqrt(2.*log(2.)));
   bsgy = bfwhmy/(2.*sqrt(2.*log(2.)));
 
   // recalculated by Geant to mm; bfwhmx, bfwhmy read in default mm.
   //vertex[0] = tXplace + RandomGauss(aj1bx,0, bsgx);
-  vertex[2] = tZplace + RandomGauss(aj1bx,0, bsgx);
-  vertex[1] = tYplace + RandomGauss(aj1by,0, bsgy);
+  
+  
   //vertex[0] = tXplace + RandomGauss(aj1bx,-bsgx, bsgx);
   //vertex[1] = tYplace + RandomGauss(aj1by,-bsgy, bsgy);
   //tZplace=-10;
   //vertex[2] = tZplace - thigh + RandomFlat(ajbz)*2*thigh;
-  vertex[0] = tXplace - thigh + RandomFlat(ajbz)*2*thigh;
+  vertex[0] = tXplace + RandomGauss(aj1bx, 0, bsgx);
+  vertex[1] = tYplace + RandomGauss(aj1by, 0, bsgy);
+  vertex[2] = tZplace - thigh + RandomFlat(ajbz)*2*thigh;
+  cout<<thigh<<endl;
 
-  //cout<<"vertexZ: "<<vertex[2]<<endl;
+  cout<<"vertexZ: "<<vertex[2]<<endl;
  }
 
 
@@ -436,13 +440,13 @@ G4double* B4aPrimaryGeneratorAction::upunif(double *ptot)
 }
 
 G4ThreeVector B4aPrimaryGeneratorAction::flatGen(){
-  double thcos = (themin + (themax - themin))*rnd->Rndm()*CLHEP::pi/180.;
-  double phi = (fimin + (fimax - fimin))*rnd->Rndm()*CLHEP::pi/180. - 3.14;
+  double theta = 5+50*rnd->Rndm();
+  double phi = -20*rnd->Rndm();
 
 //  G4cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! thcos="<<thcos<<" phi="<<phi<<"\n";
   G4ThreeVector vec(1.0, 1.0, 1.0);
-  vec.setPhi(phi);
-  vec.setTheta(thcos);
+  vec.setPhi(phi*deg);
+  vec.setTheta(theta*deg);
   vec.setMag(1.0);
 //  G4cout<<"****************************************&^%$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$theta="<<vec.getTheta()<<" phi="<<vec.getPhi()<<"\n";
   return vec;
