@@ -328,9 +328,9 @@ void B4aPrimaryGeneratorAction::Pos(void)
   vertex[0] = tXplace + RandomGauss(aj1bx, 0, bsgx);
   vertex[1] = tYplace + RandomGauss(aj1by, 0, bsgy);
   vertex[2] = tZplace - thigh + RandomFlat(ajbz)*2*thigh;
-  cout<<thigh<<endl;
+  //cout<<thigh<<endl;
 
-  cout<<"vertexZ: "<<vertex[2]<<endl;
+  //cout<<"vertexZ: "<<vertex[2]<<endl;
  }
 
 
