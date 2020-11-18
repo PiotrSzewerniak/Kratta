@@ -187,7 +187,7 @@ G4String name=theTouchable->GetVolume(0)->GetName();
 	{
 		copyNb1=theTouchable->GetCopyNumber(0);
 		fEventAction->AddPlastic(Edep,Stepl,copyNb1);
-		cout<<"energia: "<<Edep<<endl;
+		//cout<<"energia: "<<Edep<<endl;
 	}
 
 
