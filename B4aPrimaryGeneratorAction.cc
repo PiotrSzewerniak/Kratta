@@ -440,8 +440,10 @@ G4double* B4aPrimaryGeneratorAction::upunif(double *ptot)
 }
 
 G4ThreeVector B4aPrimaryGeneratorAction::flatGen(){
-  double theta = 5+50*rnd->Rndm();
+  double theta = 5+55*rnd->Rndm();
+  //double theta = 5+50*rnd->Rndm();
   double phi = -20*rnd->Rndm();
+
 
 //  G4cout<<"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! thcos="<<thcos<<" phi="<<phi<<"\n";
   G4ThreeVector vec(1.0, 1.0, 1.0);
