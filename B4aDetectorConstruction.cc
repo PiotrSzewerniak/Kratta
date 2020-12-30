@@ -355,7 +355,7 @@ G4VPhysicalVolume* B4aDetectorConstruction::DefineVolumes()
    G4VSolid* kr_coating = new G4Box("kr_coating",fKRwin_xy,fKRwin_xy,0.5*frameThickCoating);
    G4VSolid* kr_pipe = new G4Tubs("kr_pipe",0.*mm,3.*mm,500.*mm,0.*deg,360.*deg);    
 
-   G4LogicalVolume* kr_obstacleLV =                         
+   G4LogicalVolume* kr_obstacleLV =                      
     new G4LogicalVolume(kr_obstacle,            //its solid
                         plastic,             //its material
                         "kr_obstacle");         //its name
@@ -784,7 +784,7 @@ G4RotationMatrix *rm02 = new G4RotationMatrix();
  G4VSolid* csi_shortS = new G4Trd("csi_short",fCsiShort_xy1,fCsiShort_xy2,fCsiShort_xy1,fCsiShort_xy2,fCsiShort_z);
 
  //G4LogicalVolume* csi_shortLV= new G4LogicalVolume(csi_shortS,csi_mat,"csi_short");          
- G4LogicalVolume* csi_shortLV= new G4LogicalVolume(csi_shortS,plastic,"csi_short");          
+ G4LogicalVolume* csi_shortLV= new G4LogicalVolume(csi_shortS,csi_mat,"csi_short");          
 
 
  G4PVPlacement *fcsi_shortPV = new G4PVPlacement(
@@ -805,7 +805,7 @@ G4RotationMatrix *rm02 = new G4RotationMatrix();
   
   G4VSolid* csi_longS = new G4Trd("csi_long",fCsiLong_xy1,fCsiLong_xy2,fCsiLong_xy1,fCsiLong_xy2,fCsiLong_z);
   //G4LogicalVolume* csi_longLV= new G4LogicalVolume(csi_longS,csi_mat,"csi_long");          
-  G4LogicalVolume* csi_longLV= new G4LogicalVolume(csi_longS,plastic,"csi_long");          
+  G4LogicalVolume* csi_longLV= new G4LogicalVolume(csi_longS,csi_mat,"csi_long");          
 
   G4PVPlacement *fcsi_longPV = new G4PVPlacement(
                  0,                // no rotation
@@ -1045,7 +1045,7 @@ G4LogicalVolume* kr_housingRLV = new G4LogicalVolume(ReflKrR,defaultMaterial,"kr
 						 fCheckOverlaps);*/
 
   //PRZEROBIĆ NA CYLINDER
-  G4VSolid* tarTi2S = new G4Tubs("Ti2S",0.*mm,30.*mm,3.*mm,0.*deg,360.*deg);    
+  G4VSolid* tarTi2S = new G4Tubs("Ti2S",0.*mm,30.*mm,0.5*mm,0.*deg,360.*deg);    
   G4LogicalVolume* tarTi2LV = new G4LogicalVolume(tarTi2S,target_mat,"tarTi2LV");
 
   G4PVPlacement *tarTi2PV = new G4PVPlacement(rm01,           
@@ -1165,14 +1165,14 @@ G4LogicalVolume* kr_housingRLV = new G4LogicalVolume(ReflKrR,defaultMaterial,"kr
   cryst2->SetForceAuxEdgeVisible (true);
   //cryst2->SetForceSolid (true);
   csi_shortLV->SetVisAttributes(cryst2);
-  //csi_longLV->SetVisAttributes(cryst);
+  ////csi_longLV->SetVisAttributes(cryst);
 
  //magenta
   G4VisAttributes* krh= new G4VisAttributes(G4Colour(1.,0,1.));
   //krh->SetVisibility(true);
   krh->SetForceAuxEdgeVisible (true);
   //siatka
-  krh->SetForceSolid (true); 
+  krh->SetForceSolid (false); 
   kr_housingLV->SetVisAttributes(krh);
   //csi_longLV->SetVisAttributes(cryst);
 
