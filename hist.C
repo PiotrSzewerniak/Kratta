@@ -11,7 +11,7 @@ void hist(){
 	char name[200];
 	char name1[200];
 	char name2[200];
-	for(int i=50;i<=200;i+=30)
+	for(int i=50;i<=260;i+=30)
 {
 	sprintf(name,"/home/piotrek/Symulacje/%d_MeV/steppingAction_t0.root/T",i);
 	sprintf(name1,"pics_%d.root",i);
@@ -26,22 +26,22 @@ void hist(){
 	}
 
 
-	TH1F* edep = new TH1F("edep","edep", 200, 0, 3); //(nazwa,tytul)
+	TH1F* edep = new TH1F("edep","edep", 200, 0, 7); //(nazwa,tytul)
 	TH2F* phivstheta = new TH2F("phivstheta","phivstheta",100,0,50,100,-50,0);
 	TH1F* p0 = new TH1F("p0","p0",100,0,5);
 	TH1F* p1 = new TH1F("p1","p1",100,0,5);
 	TH2F* edepvsp0 = new TH2F("edepvsp0","edepvsp0",100,0,5,100,0,5);
 	TH2F* edepvsp1 = new TH2F("edepvsp1","edepvsp1",100,0,5,100,0,5);
 	TH1F* kr_nb = new TH1F("kr_nb","kr_nb",200, 0, 14);
-	TH2F* edepvsshort = new TH2F("edepvsshort","edepvsshort",200,0,20,200,0,5);
+	TH2F* edepvsshort = new TH2F("edepvsshort","edepvsshort",200,0,55,200,0,5);
 	TH2F* edepvslong = new TH2F("edepvslong","edepvslong",200,0,140,200,0,5);
-	TH2F* shortvslong = new TH2F("shortvslong","shortvslong",200,0,140,200,0,20);
-	TH1F* edep_target = new TH1F("edep_target","edep_target",200,0,35);
+	TH2F* shortvslong = new TH2F("shortvslong","shortvslong",200,0,140,200,0,55);
+	TH1F* edep_target = new TH1F("edep_target","edep_target",200,0,15);
 	TH1F* edep_krHouse = new TH1F("edep_krHouse","edep_krHouse",200,-10,10);
-	TH1F* edep_CsIshortgauss = new TH1F("edep_CsIshortgauss","edep_CsIshortgauss",200,0,45);
 	//TNtuple *T = (TNtuple*)fin->Get("T");
-	TH1F* edep_CsIshort = new TH1F("edep_CsIshort","edep_CsIshort",200,0,50);
-	TH1F* edep_CsIlong = new TH1F("edep_CsIlong","edep_CsIlong",200,0,140);
+	TH1F* edep_CsIshort = new TH1F("edep_CsIshort","edep_CsIshort",200,0,55);
+	TH1F* edep_CsIlong = new TH1F("edep_CsIlong","edep_CsIlong",200,0,200);
+	TH2F* p1vsshort = new TH2F("p1vsshort","p1vsshort",200,0,45,200,0,5);
 
 	chain->Project("edep","edep_Plastic","edep_Plastic>0");
 	// chain->Project("phivstheta","phi:theta","kr_nb==14||kr_nb==12||kr_nb==10");
@@ -61,7 +61,8 @@ void hist(){
 	chain->Project("edep_CsIshortgauss","edep_CsIshort","kr_nb==13");
 	chain->Project("edep_CsIshort","edep_CsIshort","kr_nb==13");
 	chain->Project("edep_CsIlong","edep_CsIlong","kr_nb==13");
-
+	chain->Project("p1vsshort","edep_PDactive1:edep_CsIshort","kr_nb==13");
+	//p1 do 5 short do 45
 
 	edep->Write();
 	phivstheta->Write();
@@ -75,9 +76,9 @@ void hist(){
 	shortvslong->Write();
 	edep_target->Write();
 	edep_krHouse->Write();
-	edep_CsIshortgauss->Write();
 	edep_CsIshort->Write();
 	edep_CsIlong->Write();
+	p1vsshort->Write();
 
 	fout->Close();
 }
