@@ -11,3 +11,5 @@ red disk - a target from which we generate protons of different energies,
 blue lines - proton trajectory,
 green lines - neutron trajectory,
 red lines - path of motion of delta electrons.
+
+In calibration_plastic.png one can see average deposited energy in plastic element depending on energy of beam with fitted function. It can be further used to calculate such relation for any given beam energy from given range.
